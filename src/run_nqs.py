@@ -16,120 +16,29 @@ key = jr.PRNGKey(0)
 qtx.set_default_dtype(jnp.float64)
 
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "-l", "--length", type=int, default=2, help="length of physical system"
-)
-parser.add_argument(
-    "-w", "--width", type=int, default=4, help="width of physical system"
-)
-parser.add_argument(
-    "-b",
-    "--b",
-    type=int,
-    nargs=2,
-    default=[1, 1],
-    help="boundaries: 1 = pbc, 2 = obc",
-)
-parser.add_argument(
-    "-Np", "--Np", type=int, default=8, help="Number of particles"
-)
-parser.add_argument(
-    "-UMF",
-    "--UMF",
-    type=float,
-    default=4.0,
-    help="On-site repulsion strength for MF optimization",
-)
-parser.add_argument(
-    "-DeltaMF",
-    "--DeltaMF",
-    type=float,
-    default=3.0,
-    help="Potential offset for MF optimization",
-)
-parser.add_argument(
-    "-tppMF",
-    "--tppMF",
-    type=float,
-    default=0.5,
-    help="Hopping between orbitals",
-)
-parser.add_argument(
-    "-Ud",
-    "--Ud",
-    type=float,
-    default=8.0,
-    help="On-site interaction for d sites",
-)
-parser.add_argument(
-    "-Up", "--Up", type=float, default=3.0, help="On-site interaction for p sites"
-)
-parser.add_argument(
-    "-tpp", "--tpp", type=float, default=0.5, help="Hopping between orbitals"
-)
-parser.add_argument(
-    "-Delta", "--Delta", type=float, default=3.5, help="Potential offset"
-)
-parser.add_argument(
-    "-pdd",
-    "--pairing_dd",
-    type=float,
-    default=0.01,
-    help="Strength of pairing term between d-d",
-)
-parser.add_argument(
-    "-pdp",
-    "--pairing_dp",
-    type=float,
-    default=0.01,
-    help="Strength of pairing term between d-p",
-)
-parser.add_argument(
-    "-c", "--c", type=float, default=0.1, help="Prefactor of (N-Ntarget)**2"
-)
-parser.add_argument(
-    "-stepsMF",
-    "--stepsMF",
-    type=int,
-    default=10000,
-    help="Number of optimization steps for MF optimization",
-)
-parser.add_argument(
-    "-steps", "--steps", type=int, default=1000, help="Number of optimization steps"
-)
-parser.add_argument(
-    "-layers", "--layers", type=int, default=2, help="Number of network layers"
-)
-parser.add_argument(
-    "-features", "--features", type=int, default=12, help="Number of features"
-)
-parser.add_argument(
-    "-ks", "--kernelsize", type=int, default=3, help="kernelsize"
-)
-parser.add_argument(
-    "-nhid", "--nhid", type=int, default=4, help="Number of hidden fermions"
-)
-parser.add_argument(
-    "-nsamples", "--nsamples", type=int, default=1000, help="Number of samples"
-)
-parser.add_argument(
-    "-rtol", "--rtol", type=float, default=1e-12, help="Tolerance for SR step"
-)
+parser.add_argument("-l", "--length", type=int, default=2, help="length of physical system")
+parser.add_argument("-w", "--width", type=int, default=4, help="width of physical system")
+parser.add_argument("-b","--b",type=int,nargs=2,default=[1, 1],help="boundaries: 1 = pbc, 2 = obc",)
+parser.add_argument("-Np", "--Np", type=int, default=8, help="Number of particles")
+parser.add_argument("-UMF", "--UMF",type=float,default=0.0,help="On-site repulsion strength for MF optimization",)
+parser.add_argument("-DeltaMF","--DeltaMF",type=float,default=3.0,help="Potential offset for MF optimization",)
+parser.add_argument("-tppMF","--tppMF",type=float,default=0.5,help="Hopping between orbitals",)
+parser.add_argument("-Ud","--Ud",type=float,default=8.0,help="On-site interaction for d sites",)
+parser.add_argument("-Up", "--Up", type=float, default=3.0, help="On-site interaction for p sites")
+parser.add_argument("-tpp", "--tpp", type=float, default=0.5, help="Hopping between orbitals")
+parser.add_argument("-Delta", "--Delta", type=float, default=3.5, help="Potential offset")
+parser.add_argument("-c", "--c", type=float, default=0.1, help="Prefactor of (N-Ntarget)**2")
+parser.add_argument("-stepsMF","--stepsMF", type=int, default=10000, help="Number of optimization steps for MF optimization",)
+parser.add_argument("-steps", "--steps", type=int, default=1000, help="Number of optimization steps")
+parser.add_argument("-layers", "--layers", type=int, default=2, help="Number of network layers")
+parser.add_argument("-features", "--features", type=int, default=12, help="Number of features")
+parser.add_argument("-ks", "--kernelsize", type=int, default=3, help="kernelsize")
+parser.add_argument("-nhid", "--nhid", type=int, default=4, help="Number of hidden fermions")
+parser.add_argument("-nsamples", "--nsamples", type=int, default=1000, help="Number of samples")
+parser.add_argument("-rtol", "--rtol", type=float, default=1e-12, help="Tolerance for SR step")
 parser.add_argument("-lr", "--lr", type=float, default=0.03, help="Learning rate")
-parser.add_argument(
-    "-loadMF",
-    "--loadMF",
-    type=int,
-    default=1,
-    help="if 1: loads MF, 0: doesnt load MF",
-)
-parser.add_argument(
-    "-load",
-    "--load",
-    type=int,
-    default=0,
-    help="if 1: loads from previous runs, 0: runs the optimization",
-)
+parser.add_argument("-loadMF", "--loadMF", type=int, default=1, help="if 1: loads MF, 0: doesnt load MF",)
+parser.add_argument("-load", "--load", type=int, default=0,help="if 1: loads from previous runs, 0: runs the optimization",)
 
 args = parser.parse_args()
 L1 = args.length
@@ -140,8 +49,6 @@ Ntarget = args.Np
 # Mean-field and neural quantum state optimization parameters.
 uMF = args.UMF
 deltaMF = args.DeltaMF
-pairing_dd = args.pairing_dd
-pairing_dp = args.pairing_dp
 tppMF = args.tppMF
 c = args.c
 nstepsMF = args.stepsMF
@@ -167,21 +74,11 @@ if L1 * L2 > 48:
 modelstring = "Det"
 MFstring = "Det"
 print("jax device: ", jax.devices())
-print(
-    "Running Optimization for Backflow"
-    + modelstring
-    + " and Mean-Field "
-    + MFstring
-    + " with paring_dd="
-    + str(pairing_dd)
-    + " and pairing_dp="
-    + str(pairing_dp)
-)
 
 if args.loadMF == 1:
     filename = (
         f"Lx{L1}_Ly{L2}_b{b1}{b2}_Nt{Ntarget}_Ud{ud}_Up{up}_tpp{tpp}_Delta{delta}"
-        f"_MF{uMF}_{deltaMF}_{pairing_dd}_{pairing_dp}_{c}_{nstepsMF}"
+        f"_MF{uMF}_{deltaMF}_{c}_{nstepsMF}"
         f"_layers{layers}_features{features}_ks{kernelsize}_nhid{nhid}"
         f"_nsamples{nsamples}_nsteps{nsteps}_lr{lr}_rtol{rtol}"
     )
@@ -233,7 +130,7 @@ net = qtx.model.ResConv(
 
 MFfile = (
     f"MF_results/orbs_Lx{L1}_Ly{L2}_b{b1}{b2}_Nt{Ntarget}_U{uMF}_Delta{deltaMF}"
-    f"_tpp{tppMF}_pairing{pairing_dd}_{pairing_dp}_c{c}_nsteps{nstepsMF}.npy"
+    f"_tpp{tppMF}_c{c}_nsteps{nstepsMF}.npy"
 )
 if args.loadMF == 0:
     F = jr.normal(key, (lattice.Nfmodes, lattice.Nfmodes), dtype=jnp.float64) * 1
@@ -260,17 +157,6 @@ print(
 
 # Backflow uses twice nhid because spinful models internally halve d.
 model = qtx.model.DetBackflow(net=net, d=2 * nhid, U0=U)
-state = qtx.state.Variational(model, max_parallel=max_parallel, symm=full_symm)
-sampler = qtx.sampler.ParticleHop(state, nsamples, thermal_steps=100)
-samples = sampler.sweep()
-
-MFmodel = qtx.model.GeneralPf(F=F, dtype=jnp.float64)
-MFstate = qtx.state.GeneralPfState(MFmodel, max_parallel=max_parallel)
-sampler = qtx.sampler.ParticleHop(MFstate, nsamples, thermal_steps=100)
-samples = sampler.sweep()
-print("MFmodel (Pf) energy on samples:", H.expectation(MFstate, samples))
-
-model = qtx.model.PfBackflow(net=net, d=2 * nhid, U0=U0, J0=J0)
 state = qtx.state.Variational(model, max_parallel=max_parallel, symm=full_symm)
 sampler = qtx.sampler.ParticleHop(state, nsamples, thermal_steps=100)
 samples = sampler.sweep()
